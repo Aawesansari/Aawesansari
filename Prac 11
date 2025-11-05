@@ -1,0 +1,75 @@
+from collections import deque
+
+# ----------------------------------------------------------
+# GRAPH REPRESENTATION
+# ----------------------------------------------------------
+
+# Locations: A, B, C, D, E
+# Let's assume routes (edges) as follows:
+# A → B, A → C, B → D, C → D, D → E
+
+# --- Adjacency Matrix (for DFS) ---
+locations = ['A', 'B', 'C', 'D', 'E']
+adj_matrix = [
+    # A  B  C  D  E
+    [0, 1, 1, 0, 0],  # A
+    [1, 0, 0, 1, 0],  # B
+    [1, 0, 0, 1, 0],  # C
+    [0, 1, 1, 0, 1],  # D
+    [0, 0, 0, 1, 0]   # E
+]
+
+# --- Adjacency List (for BFS) ---
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C', 'E'],
+    'E': ['D']
+}
+
+
+# ----------------------------------------------------------
+# DEPTH FIRST SEARCH (using adjacency matrix)
+# ----------------------------------------------------------
+def dfs(matrix, start, visited, locations):
+    print(start, end=" ")
+    visited[locations.index(start)] = True
+
+    for j in range(len(matrix)):
+        if matrix[locations.index(start)][j] == 1 and not visited[j]:
+            dfs(matrix, locations[j], visited, locations)
+
+
+# ----------------------------------------------------------
+# BREADTH FIRST SEARCH (using adjacency list)
+# ----------------------------------------------------------
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+
+    while queue:
+        node = queue.popleft()
+        print(node, end=" ")
+
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+
+# ----------------------------------------------------------
+# MAIN PROGRAM
+# ----------------------------------------------------------
+if __name__ == "__main__":
+    print("Popular Locations: ", locations)
+    start = 'A'
+    print(f"\nStarting location: {start}")
+
+    print("\n(i) DFS Traversal (using Adjacency Matrix):")
+    visited = [False] * len(locations)
+    dfs(adj_matrix, start, visited, locations)
+
+    print("\n\n(ii) BFS Traversal (using Adjacency List):")
+    bfs(adj_list, start)
