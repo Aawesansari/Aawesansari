@@ -1,0 +1,47 @@
+# E-Commerce Customer Account Search System
+
+# Function 1️⃣: Linear Search
+def linear_search(account_ids, target):
+    for i in range(len(account_ids)):
+        if account_ids[i] == target:
+            return i  # Return index if found
+    return -1  # Not found
+
+
+# Function 2️⃣: Binary Search (List must be sorted)
+def binary_search(account_ids, target):
+    low = 0
+    high = len(account_ids) - 1
+
+    while low <= high:
+        mid = (low + high) // 2
+        if account_ids[mid] == target:
+            return mid
+        elif account_ids[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1  # Not found
+
+
+# Main Program
+print("🛒 E-Commerce Customer Account Search System")
+print("-------------------------------------------")
+
+# Sample data
+account_ids = [1001, 1012, 1015, 1020, 1030, 1045, 1050, 1070]
+target_id = int(input("Enter customer account ID to search: "))
+
+# Linear Search
+result_linear = linear_search(account_ids, target_id)
+if result_linear != -1:
+    print(f"✅ Linear Search: Account ID {target_id} found at position {result_linear}")
+else:
+    print(f"❌ Linear Search: Account ID {target_id} not found")
+
+# Binary Search
+result_binary = binary_search(account_ids, target_id)
+if result_binary != -1:
+    print(f"✅ Binary Search: Account ID {target_id} found at position {result_binary}")
+else:
+    print(f"❌ Binary Search: Account ID {target_id} not found")
