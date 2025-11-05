@@ -1,0 +1,71 @@
+from collections import deque
+
+class CallCenter:
+    def __init__(self):
+        self.call_queue = deque()  # Queue to store incoming calls
+
+    # 1️⃣ Add a call to the queue
+    def addCall(self, customerID, callTime):
+        call = {"CustomerID": customerID, "CallTime": callTime}
+        self.call_queue.append(call)
+        print(f"📞 Call from Customer {customerID} added to the queue (Call time: {callTime} mins).")
+
+    # 2️⃣ Answer the next call
+    def answerCall(self):
+        if not self.call_queue:
+            print("⚠️ No calls to answer. The queue is empty.")
+            return
+        call = self.call_queue.popleft()  # Remove first call (FIFO)
+        print(f"✅ Answered call from Customer {call['CustomerID']} (Call time: {call['CallTime']} mins).")
+
+    # 3️⃣ View all calls currently in queue
+    def viewQueue(self):
+        if not self.call_queue:
+            print("📭 No pending calls in the queue.")
+            return
+        print("📋 Pending Calls in Queue:")
+        for i, call in enumerate(self.call_queue, start=1):
+            print(f"{i}. Customer ID: {call['CustomerID']} | Call Time: {call['CallTime']} mins")
+
+    # 4️⃣ Check if the queue is empty
+    def isQueueEmpty(self):
+        return len(self.call_queue) == 0
+
+
+# Main Program
+if __name__ == "__main__":
+    center = CallCenter()
+
+    while True:
+        print("\n----- Call Center Queue Menu -----")
+        print("1. Add a Call")
+        print("2. Answer Next Call")
+        print("3. View Pending Calls")
+        print("4. Check if Queue is Empty")
+        print("5. Exit")
+
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == '1':
+            customerID = input("Enter Customer ID: ")
+            callTime = input("Enter Call Time (in minutes): ")
+            center.addCall(customerID, callTime)
+
+        elif choice == '2':
+            center.answerCall()
+
+        elif choice == '3':
+            center.viewQueue()
+
+        elif choice == '4':
+            if center.isQueueEmpty():
+                print("✅ The call queue is empty.")
+            else:
+                print("📞 Calls are waiting in the queue.")
+
+        elif choice == '5':
+            print("👋 Exiting call center system...")
+            break
+
+        else:
+            print("⚠️ Invalid choice. Try again.")
