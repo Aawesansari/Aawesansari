@@ -1,0 +1,52 @@
+# Employee Salary Sorting System
+
+# Function 1️⃣: Selection Sort
+def selection_sort(salaries):
+    n = len(salaries)
+    for i in range(n - 1):
+        min_index = i
+        for j in range(i + 1, n):
+            if salaries[j] < salaries[min_index]:
+                min_index = j
+        # Swap the elements
+        salaries[i], salaries[min_index] = salaries[min_index], salaries[i]
+    return salaries
+
+
+# Function 2️⃣: Bubble Sort
+def bubble_sort(salaries):
+    n = len(salaries)
+    for i in range(n - 1):
+        for j in range(n - i - 1):
+            if salaries[j] > salaries[j + 1]:
+                # Swap the elements
+                salaries[j], salaries[j + 1] = salaries[j + 1], salaries[j]
+    return salaries
+
+
+# Main Program
+print("🏢 Employee Salary Sorting System")
+print("--------------------------------")
+
+# Input: list of salaries
+salaries = [45000.50, 30000.75, 52000.00, 41000.25, 61000.00, 70000.75, 35000.50, 90000.00, 15000.00]
+
+print("\nOriginal Salaries:")
+print(salaries)
+
+# 1️⃣ Selection Sort
+selection_sorted = selection_sort(salaries.copy())
+print("\nSalaries after Selection Sort (Ascending):")
+print(selection_sorted)
+
+# 2️⃣ Bubble Sort
+bubble_sorted = bubble_sort(salaries.copy())
+print("\nSalaries after Bubble Sort (Ascending):")
+print(bubble_sorted)
+
+# 3️⃣ Display top 5 highest salaries
+top_five = bubble_sorted[-5:]  # since ascending order
+top_five.reverse()  # to display from highest to lowest
+print("\n💰 Top 5 Highest Salaries in the Company:")
+for rank, salary in enumerate(top_five, start=1):
+    print(f"{rank}. ₹{salary:.2f}")
