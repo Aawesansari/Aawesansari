@@ -1,0 +1,169 @@
+import math
+
+class Bucket:
+    """A single bucket in extendible hashing."""
+    def __init__(self, local_depth, size):
+        self.local_depth = local_depth
+        self.size = size
+        self.items = []
+
+    def is_full(self):
+        return len(self.items) >= self.size
+
+    def insert(self, key, value):
+        for i, (k, v) in enumerate(self.items):
+            if k == key:
+                self.items[i] = (key, value)  # Update existing key
+                return
+        self.items.append((key, value))
+
+    def delete(self, key):
+        for i, (k, v) in enumerate(self.items):
+            if k == key:
+                self.items.pop(i)
+                return True
+        return False
+
+    def search(self, key):
+        for k, v in self.items:
+            if k == key:
+                return v
+        return None
+
+
+class ExtendibleHashTable:
+    def __init__(self, bucket_size=2):
+        self.global_depth = 1
+        self.bucket_size = bucket_size
+        # Start with 2 buckets
+        self.directory = [Bucket(local_depth=1, size=bucket_size) for _ in range(2)]
+
+    # Hash Function (based on binary of key)
+    def hash(self, key):
+        return bin(hash(key))[2:]  # binary string without '0b'
+
+    # Get directory index from hash prefix
+    def get_index(self, key):
+        binary_hash = self.hash(key)
+        prefix = binary_hash[-self.global_depth:]  # use least significant bits
+        return int(prefix, 2)
+
+    # 1️⃣ Insert Key-Value Pair
+    def insert(self, key, value):
+        index = self.get_index(key)
+        bucket = self.directory[index]
+
+        if not bucket.is_full():
+            bucket.insert(key, value)
+            return
+
+        # Bucket is full — need to split
+        print(f"⚡ Bucket overflow at index {index}, splitting...")
+
+        # If local depth equals global, double the directory
+        if bucket.local_depth == self.global_depth:
+            self.double_directory()
+
+        # Split bucket
+        self.split_bucket(index)
+
+        # Try inserting again
+        self.insert(key, value)
+
+    # Double the directory size
+    def double_directory(self):
+        print("🪄 Doubling directory size...")
+        new_dir = []
+        for bucket in self.directory:
+            new_dir.append(bucket)
+            new_dir.append(bucket)
+        self.directory = new_dir
+        self.global_depth += 1
+
+    # Split a full bucket
+    def split_bucket(self, index):
+        old_bucket = self.directory[index]
+        old_local_depth = old_bucket.local_depth
+        new_local_depth = old_local_depth + 1
+
+        # Create a new bucket for split
+        new_bucket = Bucket(local_depth=new_local_depth, size=self.bucket_size)
+
+        # Update all directory entries pointing to old bucket
+        pattern = 1 << old_local_depth
+        for i in range(len(self.directory)):
+            if self.directory[i] == old_bucket and (i & pattern):
+                self.directory[i] = new_bucket
+
+        old_bucket.local_depth = new_local_depth
+
+        # Rehash items between old and new bucket
+        reinsert_items = old_bucket.items[:]
+        old_bucket.items.clear()
+        for k, v in reinsert_items:
+            self.insert(k, v)
+
+    # 2️⃣ Search for a Key
+    def search(self, key):
+        index = self.get_index(key)
+        value = self.directory[index].search(key)
+        if value is not None:
+            print(f"🔍 Found key {key} → Value: {value}")
+            return value
+        print(f"❌ Key {key} not found.")
+        return None
+
+    # 3️⃣ Delete a Key
+    def delete(self, key):
+        index = self.get_index(key)
+        deleted = self.directory[index].delete(key)
+        if deleted:
+            print(f"🗑️ Key {key} deleted successfully.")
+        else:
+            print(f"⚠️ Key {key} not found, cannot delete.")
+
+    # 4️⃣ Display Hash Table
+    def display(self):
+        print("\n📦 Extendible Hash Table State:")
+        print(f"Global Depth: {self.global_depth}")
+        for i, bucket in enumerate(self.directory):
+            print(f"Index {i:02}: Local Depth={bucket.local_depth} → {bucket.items}")
+        print("-" * 50)
+
+
+# Main Program
+if __name__ == "__main__":
+    eht = ExtendibleHashTable(bucket_size=2)
+
+    while True:
+        print("\n----- Extendible Hash Table Menu -----")
+        print("1. Insert Key-Value Pair")
+        print("2. Search Key")
+        print("3. Delete Key")
+        print("4. Display Table")
+        print("5. Exit")
+
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == '1':
+            key = int(input("Enter integer key: "))
+            value = input("Enter value: ")
+            eht.insert(key, value)
+
+        elif choice == '2':
+            key = int(input("Enter key to search: "))
+            eht.search(key)
+
+        elif choice == '3':
+            key = int(input("Enter key to delete: "))
+            eht.delete(key)
+
+        elif choice == '4':
+            eht.display()
+
+        elif choice == '5':
+            print("👋 Exiting program...")
+            break
+
+        else:
+            print("⚠️ Invalid choice! Try again.")
