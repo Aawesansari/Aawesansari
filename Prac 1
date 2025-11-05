@@ -1,0 +1,70 @@
+# Library Borrowing Record Management System
+
+# Sample data
+# Dictionary format: { "Book Name": Number of times borrowed }
+library_books = {
+    "Data Structures": 25,
+    "Operating Systems": 18,
+    "Computer Networks": 30,
+    "Python Programming": 42,
+    "Discrete Mathematics": 10,
+    "Machine Learning": 42,   # same as Python Programming (test for mode)
+    "Database Systems": 0
+}
+
+# List of members and their borrowed book counts
+members_borrow_count = [5, 0, 3, 10, 0, 7, 2, 4, 0, 8]
+
+
+# 1️⃣ Compute average number of books borrowed by all library members
+def average_books_borrowed(members):
+    total = sum(members)
+    count = len(members)
+    return total / count if count != 0 else 0
+
+
+# 2️⃣ Find the book with the highest and lowest number of borrowings
+def highest_and_lowest_borrowed(library):
+    highest = max(library, key=library.get)
+    lowest = min(library, key=library.get)
+    return highest, lowest
+
+
+# 3️⃣ Count the number of members who have not borrowed any books (borrow count = 0)
+def count_non_borrowers(members):
+    count = 0
+    for borrow in members:
+        if borrow == 0:
+            count += 1
+    return count
+
+
+# 4️⃣ Display the most frequently borrowed book (mode of borrow counts)
+def most_frequent_borrowed_book(library):
+    from statistics import mode, multimode
+    borrow_counts = list(library.values())
+    modes = multimode(borrow_counts)  # Handles multiple books with same highest frequency
+    most_frequent_books = [book for book, count in library.items() if count in modes]
+    return most_frequent_books
+
+
+# Main execution
+print("📚 Library Borrowing Management System")
+print("--------------------------------------")
+
+# 1. Average number of books borrowed
+avg_borrow = average_books_borrowed(members_borrow_count)
+print(f"Average books borrowed by members: {avg_borrow:.2f}")
+
+# 2. Highest and lowest borrowed books
+high, low = highest_and_lowest_borrowed(library_books)
+print(f"Highest borrowed book: '{high}' ({library_books[high]} times)")
+print(f"Lowest borrowed book: '{low}' ({library_books[low]} times)")
+
+# 3. Count of members who haven't borrowed
+no_borrow = count_non_borrowers(members_borrow_count)
+print(f"Number of members with zero borrowings: {no_borrow}")
+
+# 4. Most frequently borrowed books
+most_freq_books = most_frequent_borrowed_book(library_books)
+print("Most frequently borrowed book(s):", ", ".join(most_freq_books))
