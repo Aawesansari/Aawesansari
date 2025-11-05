@@ -1,0 +1,78 @@
+# Real-Time Undo/Redo System using Stacks
+
+class TextEditor:
+    def __init__(self):
+        self.document = ""           # Current document state
+        self.undo_stack = []          # Stack to store undo history
+        self.redo_stack = []          # Stack to store redo history
+
+    # 1️⃣ Make a change
+    def make_change(self, new_text):
+        # Save current state to undo stack
+        self.undo_stack.append(self.document)
+        # Clear redo stack (since new change invalidates redo history)
+        self.redo_stack.clear()
+        # Update document
+        self.document += new_text
+        print(f"✅ Change made: '{new_text}'")
+
+    # 2️⃣ Undo action
+    def undo(self):
+        if not self.undo_stack:
+            print("⚠️ No actions to undo.")
+            return
+        # Move current state to redo stack
+        self.redo_stack.append(self.document)
+        # Revert to previous state
+        self.document = self.undo_stack.pop()
+        print("↩️ Undo performed successfully.")
+
+    # 3️⃣ Redo action
+    def redo(self):
+        if not self.redo_stack:
+            print("⚠️ No actions to redo.")
+            return
+        # Move current state to undo stack
+        self.undo_stack.append(self.document)
+        # Reapply last undone action
+        self.document = self.redo_stack.pop()
+        print("↪️ Redo performed successfully.")
+
+    # 4️⃣ Display current document state
+    def display(self):
+        print(f"📄 Current Document State: \"{self.document}\"")
+
+
+# Main Program
+if __name__ == "__main__":
+    editor = TextEditor()
+
+    while True:
+        print("\n----- Text Editor Menu -----")
+        print("1. Make a Change")
+        print("2. Undo Action")
+        print("3. Redo Action")
+        print("4. Display Document State")
+        print("5. Exit")
+
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == '1':
+            change = input("Enter text to add: ")
+            editor.make_change(change)
+
+        elif choice == '2':
+            editor.undo()
+
+        elif choice == '3':
+            editor.redo()
+
+        elif choice == '4':
+            editor.display()
+
+        elif choice == '5':
+            print("👋 Exiting editor...")
+            break
+
+        else:
+            print("⚠️ Invalid choice. Try again.")
